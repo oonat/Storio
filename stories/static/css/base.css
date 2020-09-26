@@ -1,0 +1,26 @@
+body {
+   font-family: 'Roboto', sans-serif;
+   background-color: #f0f0f0;
+}
+
+footer{
+   background-color: #343a40;
+}
+
+hr.muted{
+   border: 0.5px solid #6c757d;
+}
+
+a.footer_link{
+	text-decoration: none;
+	color: #6c757d;
+	-webkit-transition: color 0.4s ease-in-out; 
+  	-moz-transition: color 0.4s ease-in-out;
+  	-ms-transition: color 0.4s ease-in-out;
+  	-o-transition: color 0.4s ease-in-out;
+  	transition: color 0.4s ease-in-out;
+}
+
+a.footer_link:hover{
+    color: #bbc0c4;
+}

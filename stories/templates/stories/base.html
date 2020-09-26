@@ -1,0 +1,160 @@
+{% load static %}
+{% load notifications_tags %}
+{% notifications_unread as unread_count %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Storio is a social media platform where you can write stories from different kind of genres in collaboration with your friends">
+    <meta name="keywords" content="Story, Writing, Reading, Author, Fiction, Literature, Sci-Fi, Romance, Book, Adventure">
+
+    <link rel="icon" href="{% static 'favicon.png' %}" type="image/gif" sizes="42x42"> 
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> 
+
+
+    {% block head %}
+    {% endblock %}
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container"> <!-- for col-12 style -->
+      <a class="navbar-brand" href="{% url 'stories:story_list' %}">
+        <img src="{% static 'logo_square.png' %}" width="60" height="60" alt="storio-logo">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarToggler">
+
+          <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+              </li>
+          </ul>
+
+      <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'stories:search' %}">
+        <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search">
+        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+            <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+            </svg>
+        </button>
+      </form>
+
+      <!-- navbar-dropdown-links -->
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0 ml-4">
+        {% if user.is_authenticated %}
+
+        <li class="nav-item dropdown">
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Hi, {{user.username}}
+          </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'account:account_view' %}">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-circle mr-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z"/>
+            <path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+            </svg>
+            Account
+          </a>
+
+          <a class="dropdown-item" href="{% url 'stories:notifications_all' %}">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bell mr-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
+            <path fill-rule="evenodd" d="M8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+              </svg>
+            Notifications 
+            {% if unread_count %}
+            <span class="badge badge-pill badge-info ml-1">{{ unread_count }}</span>
+            {% endif %}
+          </a>
+
+          <div class="dropdown-divider"></div>
+             <a class="dropdown-item" href="{% url 'account:logout_view' %}">Logout</a>
+          </div>
+      </li><!-- nav-item dropdown -->
+
+      
+        {% else %}
+      <div class="row ml-2">
+        <li class="nav-item">
+          <a class="nav-link mr-2" href="{% url 'account:login_view' %}">Log in</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-outline-secondary" href="{% url 'account:registration_view' %}">Register</a>
+        </li>
+      </div>
+        {% endif %}
+      </ul>
+      <!-- navbar-dropdown-links -->
+
+    </div><!-- collapse navbar -->
+    </div><!-- container -->
+    </nav>
+
+    {% block parallax %}
+    {% endblock %}
+
+  <div class="container">
+
+    {% block content %}
+    {% endblock %}
+
+  </div><!-- container -->
+
+
+<footer class="footer mt-auto py-3">
+  <div class="container">
+    <span class="text-muted"><h2>Storio</h2></span>
+    <hr class="muted">
+    <div class="text-right">
+    <ul class="list-inline">
+      <li class="list-inline-item"><a class="footer_link" href="#">How to Use</a></li>
+      <li class="list-inline-item"><a class="footer_link" href="#">About</a></li>
+      <li class="list-inline-item"><a class="footer_link" href="#">Terms</a></li>
+      <li class="list-inline-item"><a class="footer_link" href="#">Privacy Policy</a></li>
+      <li class="list-inline-item"><a class="footer_link" href="#">Contact</a></li>
+    </ul>
+  </div>
+  </div>
+</footer>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+
+    {% block last %}
+    {% endblock %}
+
+  </body>
+</html>

@@ -1,0 +1,174 @@
+{% extends 'stories/base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block head %}
+<title> Story Settings | Storio</title>
+
+<!-- because of the template tag do not insert into css file -->
+<style>
+.jumbotron{
+background: url("{% static ""%}parallax/{{ story.genre }}_parallax.png");
+background-repeat: no-repeat;
+background-attachment: fixed;
+color:white !important;
+height:200px;
+word-wrap: break-word;
+}
+</style>
+
+{% endblock %}
+
+{% block parallax %}
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">{{ story.title }}</h1>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="col-12 col-md-8 offset-md-2">
+
+  <div class="d-flex align-items-center p-3 my-3 text-white-50 rounded shadow-sm mt-5" style="background-color: #6f42c1">
+    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-sliders mr-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+     <path fill-rule="evenodd" d="M14 3.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM11.5 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM7 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM4.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm9.5 3.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM11.5 15a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+     <path fill-rule="evenodd" d="M9.5 4H0V3h9.5v1zM16 4h-2.5V3H16v1zM9.5 14H0v-1h9.5v1zm6.5 0h-2.5v-1H16v1zM6.5 9H16V8H6.5v1zM0 9h2.5V8H0v1z"/>
+     </svg>
+    <div class="lh-100">
+      <h5 class="mb-0 text-white lh-100">Story Settings</h5>
+    </div>
+  </div>
+  
+  <form class="form mt-4" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+  <div class="shadow p-4 bg-white rounded">
+  
+  <div class="form-row">
+    <div class="form-group col-md-6">
+       	<label for="id_title">Title</label>
+        <input type="text" name="title" id="id_title" class="form-control" maxlength="100" value="{{settings_form.initial.title}}" required>
+    </div>
+
+    <div class="form-group col-md-6">
+       	<label for="id_genre">Genre</label>
+        <select class="custom-select" id="id_genre" name="genre">
+            <option value="General" selected="">General</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Crime">Crime</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Horror">Horror</option>
+            <option value="Humor">Humor</option>
+            <option value="Romance">Romance</option>
+            <option value="Sci-fi">Sci-fi</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="form-row mt-3">
+    <div class="form-group col-md-6">
+        <label for="inputStory_image">Story Image</label>
+        <div class="custom-file">
+           	<input type="file" class="custom-file-input" name="story_img" id="id_story_img" accept="image/*">
+            <label class="custom-file-label" for="id_story_img">Choose file</label>
+        </div>
+
+        <div class="custom-control custom-switch mt-4">
+           {% if settings_form.initial.private %}
+           <input type="checkbox" class="custom-control-input" name="private" id="id_private" checked>
+           {% else %}
+           <input type="checkbox" class="custom-control-input" name="private" id="id_private">
+           {% endif %}
+           <label class="custom-control-label" for="id_private">Private</label>
+        </div>
+
+        <div class="custom-control custom-switch mt-2">
+           {% if settings_form.initial.active %}
+           <input type="checkbox" class="custom-control-input" name="active" id="id_active" checked>
+           {% else %}
+           <input type="checkbox" class="custom-control-input" name="active" id="id_active">
+           {% endif %}
+           <label class="custom-control-label" for="id_active">Active</label>
+        </div>
+
+        <hr class="mt-5">
+
+      <div class="row">
+        <!-- USER PERMISSION BUTTON -->
+        {% if settings_form.initial.private %}
+        <a class="btn btn-outline-success ml-2" href="{% url 'stories:edit_story_permissions' story.slug %}" role="button">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-plus mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M11 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM1.022 13h9.956a.274.274 0 0 0 .014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 0 0 .022.004zm9.974.056v-.002.002zM6 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm4.5 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+          <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
+          </svg>
+        User Permissions</a>
+        {% endif %}
+        <!-- USER PERMISSION BUTTON -->
+
+        <!-- DELETE STORY BUTTON -->
+        <button type="button" class="btn btn-danger ml-2" data-toggle="modal" data-target="#DeleteStoryModal">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-square mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+          <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z"/>
+          <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z"/>
+          </svg>
+        Delete Story</button>
+        <!-- DELETE STORY BUTTON -->
+      </div><!-- row -->
+    </div>
+
+    <div class="form-group col-md-6">
+        <label for="id_story_description">Story Description</label>
+        <textarea class="form-control" name="story_description" id="id_story_description" rows="10" maxlength="200" autofocus>{{settings_form.initial.story_description}}</textarea>
+    </div>
+
+  </div>
+
+</div><!-- shadow p-3 mb-5 bg-white rounded -->
+
+  <button class="btn btn-lg btn-primary btn-block mt-4 mb-5" type="submit">Save changes</button>
+
+</form>
+
+
+<!-- delete story modal -->
+  <div class="modal" id="DeleteStoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Are you sure to delete this story?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              This action cannot be undone !
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <a class="btn btn-primary" href="{% url 'stories:delete_story' story.slug %}">Yes, delete it</a>
+          </div>
+        </div>
+    </div>
+  </div>
+ <!-- delete story modal -->
+
+</div><!-- col-12 col-md-8 offset-md-2 -->
+
+{% endblock %}
+
+
+{% block last %}
+<script>
+  $('#id_story_img').on('change',function(e){
+    //get the file name
+    var fileName = e.target.files[0].name
+    //replace the "Choose a file" label
+    $(this).next('.custom-file-label').html(fileName);
+  })
+</script>
+{% endblock %}

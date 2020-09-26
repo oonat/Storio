@@ -1,0 +1,90 @@
+{% extends 'stories/base.html' %}
+{% load static %}
+{% load notifications_tags %}
+{% load humanize %}
+
+{% block head %}
+<title> All Notifications | Storio</title>
+{% endblock %}
+
+
+{% block content %}
+
+   <div class="col-12 col-md-10 offset-md-1">
+
+      <div class="d-flex align-items-center p-3 my-3 text-white-50 rounded shadow-sm mt-5" style="background-color: #6f42c1">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bell mr-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
+        <path fill-rule="evenodd" d="M8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+        </svg>
+        <div class="lh-100">
+          <h5 class="mb-0 text-white lh-100">Notifications</h5>
+        </div>
+      </div>
+
+    </div><!-- col-12 col-md-10 offset-md-1 -->
+
+<div class="container">
+  <div class="row">
+
+  <div class="col-12 col-md-3 offset-md-1">
+    <div class="list-group">
+      <a role="button" href="{% url 'stories:notifications_all' %}" class="list-group-item list-group-item-action active">All</a>
+      <a role="button" href="{% url 'stories:notifications_unread' %}" class="list-group-item list-group-item-action">Unread</a>
+      <a role="button" href="{% url 'stories:notifications_read' %}" class="list-group-item list-group-item-action">Read</a>
+    </div>
+
+
+  <!-- mark as read button -->
+  <form method="POST">{% csrf_token %}
+    <button type="submit" class="btn btn-outline-primary btn-block mt-2 mb-5">
+      <svg width="1.25em" height="1.25em" viewBox="0 0 16 16" class="bi bi-check2-circle mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+      <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1 0 13.5 8a.5.5 0 0 1 1 0 6.5 6.5 0 1 1-3.25-5.63.5.5 0 1 1-.5.865A5.472 5.472 0 0 0 8 2.5z"/>
+      </svg>
+    Mark as read
+    </button>
+  </form>
+  <!-- mark as read button -->
+
+  </div><!-- col-12 col-md-3 offset-md-1 -->
+  
+
+
+<div class="col-12 col-md-7 ">
+{% if page_obj %}
+
+  {% for notification in page_obj %}
+
+  <div class="list-group">
+    {% if notification.unread %}
+    <li class="list-group-item list-group-item-info mb-1">
+    {% else %}
+    <li class="list-group-item mb-1">
+    {% endif %}
+      <div class="d-flex w-100 justify-content-between mb-1">
+        <small>{{notification.timestamp | naturaltime}}</small>
+      </div>
+      <p class="mb-1">{{notification.actor.username}} {{notification.verb}} <a href="{% url 'stories:story_detail' notification.action_object.slug %}">{{notification.action_object.title}}</a></p>
+    </li>
+  </div><!-- list group -->
+
+  {% endfor %}
+
+{% include "stories/utils/pagination.html" %}
+
+{% else %}<!-- if there is no notifications -->
+  <div class="shadow p-4 mb-5 bg-white rounded text-center">
+    <h4 class="mt-2">No notifications !</h4>
+  </div>
+{% endif %}
+
+</div><!-- col-12 col-md-7 -->
+
+
+
+</div><!-- row -->
+</div><!-- container -->
+
+
+{% endblock %}

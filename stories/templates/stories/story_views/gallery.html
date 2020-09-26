@@ -1,0 +1,371 @@
+{% extends 'stories/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block head %}
+<title>
+  {% if order != None %}
+  {{order}} Stories | Storio
+  {% else %}
+  The Most Recent Stories | Storio
+  {% endif %}
+</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&display=swap" rel="stylesheet">  
+
+<link rel="stylesheet" href="{% static 'css/story_css/gallery.css' %}">
+
+
+<!-- because of the template tag do not insert into css file -->
+<style>
+.jumbotron{
+background: url("{% static "parallax/landing_book.png" %}");
+background-repeat: no-repeat;
+background-attachment: fixed;
+color:white !important;
+height:300px;
+word-wrap: break-word;
+}
+</style>
+
+{% endblock %}
+
+{% block parallax %}
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">
+      {% if order != None %}
+      {{order}} Stories
+      {% else %}
+      The Most Recent Stories
+      {% endif %}
+    </h1>
+    <p class="lead">that you can read, contribute or collaborate with !</p>
+  </div>
+</div>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="row">
+<div class="col-12 col-md-9 mb-3">
+
+{% if page_obj %}
+  <div class="grid">
+    <div class="grid-sizer col-12 col-md-6 col-lg-4"></div>
+
+    {% for story in page_obj %}
+    <div class="grid-item col-12 col-md-6 col-lg-4">
+      <div class="card mb-4">
+        <img class="card-img-top" src="{{ story.story_img.url }}">
+
+        <!-- card stat labels-->
+        <a class="card-counters">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+          <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+          </svg>&nbsp; {{story.view_count}} 
+          &ensp;
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"/>
+          </svg>&nbsp; {{story.entry_set.all | length}}
+          &ensp;
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg> &nbsp; {{story.favorite_stories.all | length}}
+        </a>
+
+        <!-- genre label-->
+        <a class="genre-label">
+          {{ story.genre }}</a>
+
+        <div class="card-body">
+          <h5 class="card-title text-center">{{ story.title }}</h5>
+          <hr>
+
+          <p class="card-text"><small class="text-muted">Created {{ story.created_date | naturaltime }}, &nbsp; by @{{ story.creator.username }}</small></p>
+        </div>
+
+        <div class="card-footer">
+          {% if story.active == True %}
+          <span class="badge badge-success">Active</span>
+          {% else %}
+          <span class="badge badge-danger">Closed</span>
+          {% endif %}
+
+          {% if story.private == True %}
+          <span class="badge badge-danger">Private</span>
+          {% else %}
+          <span class="badge badge-info">Public</span>
+          {% endif %}
+        </div><!-- card footer -->
+
+        <a href="{% url 'stories:story_detail' story.slug %}" class="stretched-link"></a>
+      </div><!-- card mb-4 -->
+    </div><!-- grid item -->
+    {% endfor %}
+
+
+  </div><!-- grid -->
+
+  {% include "stories/utils/pagination.html" %}
+
+{% else %}<!-- if there is no filtered result -->
+  <div class="shadow p-4 mb-5 bg-white rounded text-center">
+    <h3 class="mt-2">No results !</h3>
+    <h5 class="text-muted mt-4 mb-3"> there were no results satisfying your criteria. </h5>
+  </div>
+{% endif %}
+
+
+</div> <!-- col-12 col-md-9 mb-3 -->
+
+
+
+<div class="col-12 col-md-3">
+  <div class="sticky-top mb-5">
+
+    {% if user.is_authenticated %}
+    <button type="button" class="btn btn-outline-success btn-block text-center mb-2" data-toggle="modal" data-target="#NewStoryModal">
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+      <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+      </svg>New Story
+    </button>
+    {% endif %}
+
+
+  <form method="GET">
+    <div class="gallery_filter">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <h4 class="text-center">Filter</h4>
+        </li>
+
+        <!-- GENRE FILTER --->
+        <li class="list-group-item">
+            <div class="col">
+              <span class="badge badge-dark">Genre: </span>
+            </div>
+            <div class="col mt-2">
+              <div class="form-group">
+                <select class="form-control" name="genre_select" id="genre_select">
+                  <option>All</option>
+                  <option>General</option>
+                  <option>Adventure</option>
+                  <option>Crime</option>
+                  <option>Fantasy</option>
+                  <option>Horror</option>
+                  <option>Humor</option>
+                  <option>Romance</option>
+                  <option>Sci-fi</option>
+                </select>
+              </div><!-- form-group -->
+          </div><!-- col -->
+        </li>
+        <!-- GENRE FILTER --->
+
+        <!-- PRIVATE FILTER --->
+        <li class="list-group-item">
+            <div class="col">
+              <span class="badge badge-dark">Private: </span>
+            </div>
+            <div class="col">
+              <fieldset class="form-group mt-2">
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="private_select" id="private_all" value="All" checked>
+                  <label class="form-check-label" for="private_all">
+                  All
+                  </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="private_select" id="private_true" value="True">
+                  <label class="form-check-label" for="private_true">
+                  Yes
+                  </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="private_select" id="private_false" value="False">
+                  <label class="form-check-label" for="private_false">
+                  No
+                  </label>
+                </div>
+              </fieldset>
+            </div><!-- col-->
+         </li>
+         <!-- PRIVATE FILTER --->
+
+         <!-- ACTIVE FILTER --->
+         <li class="list-group-item">
+            <div class="col">
+              <span class="badge badge-dark">Active: </span>
+            </div>
+            <div class="col">
+              <fieldset class="form-group mt-2">
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="active_select" id="active_all" value="All" checked>
+                  <label class="form-check-label" for="active_all">
+                  All
+                  </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="active_select" id="active_true" value="True">
+                  <label class="form-check-label" for="active_true">
+                  Yes
+                  </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="active_select" id="active_false" value="False">
+                  <label class="form-check-label" for="active_false">
+                  No
+                  </label>
+                </div>
+              </fieldset>
+            </div><!-- col -->
+        </li>
+        <!-- ACTIVE FILTER --->
+
+        <!-- SORT FILTER --->
+        <li class="list-group-item">
+            <div class="col">
+              <span class="badge badge-dark">Sort by: </span>
+            </div>
+            <div class="col mt-2">
+              <div class="form-group">
+                <select class="form-control" name="sort_by" id="sort_by">
+                  <option>The Most Recent</option>
+                  <option>The Most Viewed</option>
+                  <option>The Most Popular</option>
+                  <option>The Most Liked</option>
+                </select>
+              </div><!-- form-group -->
+            </div><!-- col -->
+        </li>
+        <!-- SORT FILTER --->
+
+
+        <li class="list-group-item">
+          <button type="submit" class="btn btn-sm btn-outline-info float-right">Apply</button>
+        </li>  
+
+
+
+      </ul>
+    </div><!-- gallery-filter-->
+  </form>
+
+
+</div><!-- sticky top -->
+</div> <!-- col-12 col-md-3 -->
+
+</div><!-- row -->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="NewStoryModal" tabindex="-1" role="dialog" aria-labelledby="NewStoryModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create a New Story</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+      <div class="modal-body">
+        <div class="container-fluid">
+
+            <div class="form-row">
+             <div class="form-group col-md-6">
+                <label for="id_title">Title</label>
+                <input type="text" name="title" id="id_title" class="form-control" maxlength="100" required>
+             </div>
+             <div class="form-group col-md-6">
+                <label for="id_genre">Genre</label>
+                <select class="custom-select" id="id_genre" name="genre">
+                  <option value="General" selected="">General</option>
+                  <option value="Adventure">Adventure</option>
+                  <option value="Crime">Crime</option>
+                  <option value="Fantasy">Fantasy</option>
+                  <option value="Horror">Horror</option>
+                  <option value="Humor">Humor</option>
+                  <option value="Romance">Romance</option>
+                  <option value="Sci-fi">Sci-fi</option>
+                </select>
+             </div>
+            </div>
+
+            <div class="form-row">
+             <div class="form-group col-md-6">
+
+              <label for="inputStory_image">Story Image</label>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="story_img" id="id_story_img" accept="image/*">
+                <label class="custom-file-label" for="id_story_img">Choose file</label>
+              </div>
+
+              <div class="custom-control custom-switch mt-4">
+                <input type="checkbox" class="custom-control-input" name="private" id="id_private">
+                <label class="custom-control-label" for="id_private">Private</label>
+              </div>
+
+             </div>
+
+
+             <div class="form-group col-md-6">
+              <label for="id_story_description">Story Description</label>
+              <textarea class="form-control" name="story_description" id="id_story_description" rows="10" maxlength="200" autofocus></textarea>
+             </div>
+            </div>
+
+        
+        </div><!-- container fluid -->
+      </div><!-- modal body -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-success">Create</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+
+{% endblock %}
+
+
+
+{% block last %}
+
+<script src="{% static 'js/masonary/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'js/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+
+<script type="text/javascript">
+  var $grid = $('.grid').masonry({
+  itemSelector: '.grid-item',
+  columnWidth: '.grid-sizer',
+  percentPosition: true,
+  horizontalOrder: true
+});
+
+ $grid.imagesLoaded().progress( function() {
+    $grid.masonry();
+  });
+</script>
+
+<script>
+  $('#id_story_img').on('change',function(e){
+    //get the file name
+    var fileName = e.target.files[0].name
+    //replace the "Choose a file" label
+    $(this).next('.custom-file-label').html(fileName);
+  })
+</script>
+{% endblock %}

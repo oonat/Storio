@@ -1,0 +1,128 @@
+{% extends 'stories/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block head %}
+<title>Results for {{query}} | Storio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/story_css/search.css' %}">
+
+<!-- because of the template tag do not insert into css file -->
+<style>
+.jumbotron{
+background: url("{% static "parallax/search_parallax.png" %}");
+background-repeat: no-repeat;
+background-attachment: fixed;
+color:white !important;
+height:200px;
+word-wrap: break-word;
+}
+</style>
+
+{% endblock %}
+
+{% block parallax %}
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Results for</h1>
+    <p class="lead">{{query}}</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+
+{% if page_obj %}
+<div class="col-12 mb-3">
+  <div class="grid">
+    <div class="grid-sizer col-12 col-md-4 col-lg-3"></div>
+    {% for story in page_obj %}
+    <div class="grid-item col-12 col-md-4 col-lg-3">
+      <div class="card mb-4">
+      <img class="card-img-top" src="{{ story.story_img.url }}">
+
+      <!--card stat labels -->
+      <a class="card-counters">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+        <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+        </svg>&nbsp; {{story.view_count}}
+        &ensp;
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z"/>
+        </svg>&nbsp; {{story.entry_set.all | length}}
+        &ensp;
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg> &nbsp; {{story.favorite_stories.all | length}}
+      </a>
+
+      <!-- genre labels -->
+      <a class="genre-label">
+        {{ story.genre }}</a>
+
+      <div class="card-body">
+        <h5 class="card-title text-center">{{ story.title }}</h5>
+        <hr>
+
+        <p class="card-text"><small class="text-muted">Created {{ story.created_date | naturaltime }}, &nbsp; by @{{ story.creator.username }}</small></p>
+      </div>
+
+      <div class="card-footer">
+        {% if story.active == True %}
+        <span class="badge badge-success">Active</span>
+        {% else %}
+        <span class="badge badge-danger">Closed</span>
+        {% endif %}
+
+        {% if story.private == True %}
+        <span class="badge badge-danger">Private</span>
+        {% else %}
+        <span class="badge badge-info">Public</span>
+        {% endif %}
+      </div><!-- card footer -->
+
+      <a href="{% url 'stories:story_detail' story.slug %}" class="stretched-link"></a>
+    </div><!-- card mb-4 -->
+  </div><!-- grid item -->
+  {% endfor %}
+</div><!-- grid -->
+
+{% include "stories/utils/pagination.html" %}
+
+</div> <!-- col-12 mb-3 -->
+
+{% else %}<!-- if there is no matching result -->
+<div class="col-12 col-md-8 offset-md-2">
+  <div class="shadow p-4 mb-5 bg-white rounded mt-5 text-center">
+    <h3 class="mt-2">No results !</h3>
+    <h5 class="text-muted mt-4 mb-3"> there were no results matching your search: {{query}} </h5>
+  </div>
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+
+{% block last %}
+
+<script src="{% static 'js/masonary/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'js/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+
+<script type="text/javascript">
+    var $grid = $('.grid').masonry({
+  itemSelector: '.grid-item',
+  columnWidth: '.grid-sizer',
+  percentPosition: true,
+  horizontalOrder: true
+});
+
+ $grid.imagesLoaded().progress( function() {
+    $grid.masonry();
+  });
+</script>
+{% endblock %}
