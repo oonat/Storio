@@ -5,7 +5,7 @@ I like stories, both reading and writing them. Well, I thought it would be nice 
 Some screenshots
 ----------------
 
-![Alt text](screenshots/landing_page.png?raw=true "Landing Page")
+<img src="screenshots/landing_page.png" alt="Landing Page" width="200" height="200" />
 
 ![Alt text](screenshots/gallery.png?raw=true "Gallery")
 
