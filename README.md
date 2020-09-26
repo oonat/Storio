@@ -5,18 +5,26 @@ I like stories, both reading and writing them. Well, I thought it would be nice 
 Some screenshots
 ----------------
 
-<img src="screenshots/landing_page.png" alt="Landing Page" width="200" height="200" />
+#### Landing Page
+<img src="screenshots/landing_page.png" alt="Landing Page" width="%50" height="%50" />
 
-![Alt text](screenshots/gallery.png?raw=true "Gallery")
+#### Gallery
+<img src="screenshots/gallery.png" alt="Gallery" width="%50" height="%50" />
 
-![Alt text](screenshots/new_story.png?raw=true "New Story")
+#### New Story
+<img src="screenshots/new_story.png" alt="New Story" width="%50" height="%50" />
 
-![Alt text](screenshots/story_timeline.png?raw=true "Timeline")
+#### Timeline Style Story Detail
+<img src="screenshots/story_timeline.png" alt="Timeline" width="%50" height="%50" />
 
-![Alt text](screenshots/story_paper.png?raw=true "Paper")
+#### Paper Style Story Detail
+<img src="screenshots/story_paper.png" alt="Paper" width="%50" height="%50" />
 
-![Alt text](screenshots/entry_detail.png?raw=true "Entry Detail")
+#### Entry Detail
+<img src="screenshots/entry_detail.png" alt="Entry Detail" width="%50" height="%50" />
 
-![Alt text](screenshots/notifications.png?raw=true "Notifications")
+#### Notifications
+<img src="screenshots/notifications.png" alt="Notifications" width="%50" height="%50" />
 
-![Alt text](screenshots/account_settings.png?raw=true "Settings")
+#### Account Settings
+<img src="screenshots/account_settings.png" alt="Settings" width="%50" height="%50" />
